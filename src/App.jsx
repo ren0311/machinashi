@@ -19,60 +19,62 @@ const templates = [
   },
 ]
 
-const initialHistory = [
+const historyList = [
   { label: '昨日', text: '今向かってます。もう少しで着きます。' },
   { label: '先週', text: '少し遅れます。到着予定は 12 分後です。' },
 ]
 
 function App() {
   const [selectedId, setSelectedId] = useState(templates[0].id)
-  const [history, setHistory] = useState(initialHistory)
-  const [sentAt, setSentAt] = useState('3分前')
+  const [history, setHistory] = useState(historyList)
 
   const selectedTemplate =
     templates.find((template) => template.id === selectedId) ?? templates[0]
 
   const handleSend = () => {
-    const sentText = selectedTemplate.text
-    setHistory((prev) => [{ label: '今', text: sentText }, ...prev].slice(0, 3))
-    setSentAt('ちょうど今')
+    setHistory((prev) => [{ label: '今', text: selectedTemplate.text }, ...prev].slice(0, 3))
   }
 
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">待ち合わせの安心</p>
-          <h1>待ちなし</h1>
-        </div>
-        <div className="status-pill">待ち合わせ中</div>
-      </header>
-
-      <main className="content">
-        <section className="card hero-card">
-          <div className="hero-copy">
-            <p className="label">相手からの返信が来ない</p>
-            <h2>待ち時間が不安なとき、すぐ伝えられる</h2>
-            <p className="description">
-              既読がついていても返信がこないとき、迷わず安心確認を送れるようにします。
-            </p>
-          </div>
-          <div className="status-box">
-            <span className="dot" />
+      <header className="line-header">
+        <div className="header-left">
+          <button type="button" className="back-button">‹</button>
+          <div className="profile-wrap">
+            <div className="profile-avatar">待</div>
             <div>
-              <strong>待ち合わせ開始</strong>
-              <small>集合時間 18:30</small>
+              <h1>待ちなし</h1>
+              <span>待ち合わせ中</span>
             </div>
           </div>
-        </section>
+        </div>
+        <button type="button" className="menu-button">⋯</button>
+      </header>
 
-        <section className="card template-panel">
-          <div className="panel-header">
-            <h3>安心確認テンプレート</h3>
-            <span>{sentAt}</span>
+      <main className="line-chat">
+        <div className="day-label">今日は</div>
+
+        <div className="message-row incoming">
+          <div className="bubble">
+            <p>返信が来ないとき、すぐ伝えられるようにしておこう。</p>
           </div>
+        </div>
 
-          <div className="template-list">
+        <div className="message-row outgoing">
+          <div className="bubble bubble-green">
+            <p>少し遅れます。今向かってます。</p>
+          </div>
+        </div>
+
+        <div className="message-row incoming">
+          <div className="bubble">
+            <p>かしこまりました。到着予定を伝えておくと安心ですよ。</p>
+          </div>
+        </div>
+
+        <section className="quick-reply">
+          <p className="section-label">安心確認</p>
+          <div className="template-grid">
             {templates.map((template) => (
               <button
                 key={template.id}
@@ -80,24 +82,19 @@ function App() {
                 className={template.id === selectedId ? 'template active' : 'template'}
                 onClick={() => setSelectedId(template.id)}
               >
-                <span>{template.label}</span>
+                {template.label}
               </button>
             ))}
           </div>
 
           <div className="preview-box">
-            <p className="preview-label">送信内容</p>
             <p>{selectedTemplate.text}</p>
           </div>
-
-          <button type="button" className="send-button" onClick={handleSend}>
-            送信する
-          </button>
         </section>
 
-        <section className="card history-panel">
-          <div className="panel-header">
-            <h3>最近の送信履歴</h3>
+        <section className="history-box">
+          <div className="history-header">
+            <p className="section-label">履歴</p>
             <span>3件</span>
           </div>
 
@@ -105,11 +102,17 @@ function App() {
             {history.map((item) => (
               <li key={`${item.label}-${item.text}`}>
                 <span>{item.label}</span>
-                <p>{item.text}</p>
+                <strong>{item.text}</strong>
               </li>
             ))}
           </ul>
         </section>
+
+        <div className="composer-bar">
+          <button type="button" className="plus-button">＋</button>
+          <div className="input-box">{selectedTemplate.text}</div>
+          <button type="button" className="send-button" onClick={handleSend}>送信</button>
+        </div>
       </main>
     </div>
   )
